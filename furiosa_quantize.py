@@ -21,9 +21,12 @@ def main():
     calib_data = args.calib_data
     calib_count = args.calib_count
     input_name = args.model_input_name
+    model_repo = args.model_repo
+
+    assert model_repo in ["ultralytics", "openmmlab"], "Unsupported torchmodel for yolov5s structure!!"
     
     f32_onnx_model = onnx.load_model(onnx_path)
-    extracted_onnx_model = extract_model(f32_onnx_model, input_name)
+    extracted_onnx_model = extract_model(f32_onnx_model, input_name, model_repo)
     optimized_onnx_model = optimize_model(model = extracted_onnx_model, opset_version=opset, input_shapes = {input_name: [1,3,*INPUT_SHAPE]})
 
     calib_data_names = os.listdir(calib_data)
@@ -47,7 +50,7 @@ def main():
 
     print(f"Completed quantinization >> {dfg_path}")
 
-def extract_model(model: onnx.ModelProto, input_name):
+def extract_model(model: onnx.ModelProto, input_name, model_repo):
     """Cut off the post-processing components."""
     input_to_shape = [(input_name, (1,3, *INPUT_SHAPE))]
 
@@ -55,14 +58,24 @@ def extract_model(model: onnx.ModelProto, input_name):
     # structure of the original PyTorch code as closely as possible. We need to experiment more with
     # different cut points to achieve the best combination of speed and accuracy.
     
-    output_to_shape = (
-        # between /model/model/model.24/m.0/Conv and /model/model/model.24/Reshape
-        ("/model/model/model.24/m.0/Conv_output_0", (1, 255, 80, 80)),
-        # between /model/model/model.24/m.1/Conv and /model/model/model.24/Reshape_2
-        ("/model/model/model.24/m.1/Conv_output_0", (1, 255, 40, 40)),
-        # between /model/model/model.24/m.2/Conv and /model/model/model.24/Reshape_4
-        ("/model/model/model.24/m.2/Conv_output_0", (1, 255, 20, 20)),
-    )
+    if model_repo == "ultralytics":
+        output_to_shape = (
+            # between /model/model/model.24/m.0/Conv and /model/model/model.24/Reshape
+            ("/model/model/model.24/m.0/Conv_output_0", (1, 255, 80, 80)),
+            # between /model/model/model.24/m.1/Conv and /model/model/model.24/Reshape_2
+            ("/model/model/model.24/m.1/Conv_output_0", (1, 255, 40, 40)),
+            # between /model/model/model.24/m.2/Conv and /model/model/model.24/Reshape_4
+            ("/model/model/model.24/m.2/Conv_output_0", (1, 255, 20, 20)),
+        )
+    else:
+        output_to_shape = (
+            # between /model/model/model.24/m.0/Conv and /model/model/model.24/Reshape
+            ("/head_module/convs_pred.0/Conv_output_0", (1, 255, 80, 80)),
+            # between /model/model/model.24/m.1/Conv and /model/model/model.24/Reshape_2
+            ("/head_module/convs_pred.1/Conv_output_0", (1, 255, 40, 40)),
+            # between /model/model/model.24/m.2/Conv and /model/model/model.24/Reshape_4
+            ("/head_module/convs_pred.2/Conv_output_0", (1, 255, 20, 20)),
+        )
     input_to_shape = {
         tensor_name: [
             onnx.TensorShapeProto.Dimension(dim_value=dimension_size) for dimension_size in shape
@@ -92,6 +105,7 @@ def extract_model(model: onnx.ModelProto, input_name):
 def build_argument_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--onnx_path', type=str, default = "Result.onnx", help = 'Path to onnx file') # onnx 
+    parser.add_argument('--model_repo', type=str, default = "ultralytics", help = "repository = [ultralytics, openmmlab]")
     parser.add_argument('--dfg_path', type = str, default = "./Result.dfg", help = "Path to i8 onnx file") # dfg file path
     parser.add_argument('--opset_version', type=int, default=13, help='the ONNX version to export the model to') 
     parser.add_argument('--calib_data', type = str, default = "./coco/train2017", help = "Path to calibration data containing image files") # calibration dataset path
