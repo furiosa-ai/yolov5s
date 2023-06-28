@@ -1,23 +1,25 @@
 import cv2
 import numpy as np
 
-def load_input(image_path: str, new_shape = (640, 640)):
+
+def load_input(image_path: str, new_shape=(640, 640)):
     img = cv2.imread(image_path)
-    
+
     if isinstance(new_shape, int):
         new_shape = (new_shape, new_shape)
 
-    img, preproc_params = letterbox(img, new_shape, auto = False)
+    img, preproc_params = letterbox(img, new_shape, auto=False)
 
-    img = img.transpose((2,0,1))
+    img = img.transpose((2, 0, 1))
     img = np.expand_dims(img, 0)
-    img = np.ascontiguousarray(img, dtype=np.float32) / 255.
+    img = np.ascontiguousarray(img, dtype=np.float32) / 255.0
     return img, preproc_params
 
-def letterbox(img, new_shape, color = (114,114,114), auto = True, scaleup = True, stride = 32):
+
+def letterbox(img, new_shape, color=(114, 114, 114), auto=True, scaleup=True, stride=32):
     h, w = img.shape[:2]
 
-    ratio = min(new_shape[0]/h, new_shape[1]/w) 
+    ratio = min(new_shape[0] / h, new_shape[1] / w)
 
     if not scaleup:
         ratio = min(ratio, 1.0)
@@ -31,12 +33,12 @@ def letterbox(img, new_shape, color = (114,114,114), auto = True, scaleup = True
     dw /= 2
     dh /= 2
 
-    if (w,h) != new_unpad:
+    if (w, h) != new_unpad:
         interpolation = cv2.INTER_LINEAR if ratio > 1 else cv2.INTER_AREA
-        img = cv2.resize(img, new_unpad, interpolation = interpolation)
+        img = cv2.resize(img, new_unpad, interpolation=interpolation)
 
-    top, bottom = int(round(dh-0.1)), int(round(dh+0.1))
-    left, right = int(round(dw-0.1)), int(round(dw+0.1))
+    top, bottom = int(round(dh - 0.1)), int(round(dh + 0.1))
+    left, right = int(round(dw - 0.1)), int(round(dw + 0.1))
 
-    img = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT, value = color)
-    return img, (ratio, (dw,dh)) 
+    img = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)
+    return img, (ratio, (dw, dh))
