@@ -4,62 +4,199 @@ import torchvision
 import cv2
 
 
-CLASSES = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light', 
-         'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 
-         'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee', 
-         'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard', 
-         'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 
-         'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch', 
-         'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 
-         'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear', 
-         'hair drier', 'toothbrush']
+CLASSES = [
+    "person",
+    "bicycle",
+    "car",
+    "motorcycle",
+    "airplane",
+    "bus",
+    "train",
+    "truck",
+    "boat",
+    "traffic light",
+    "fire hydrant",
+    "stop sign",
+    "parking meter",
+    "bench",
+    "bird",
+    "cat",
+    "dog",
+    "horse",
+    "sheep",
+    "cow",
+    "elephant",
+    "bear",
+    "zebra",
+    "giraffe",
+    "backpack",
+    "umbrella",
+    "handbag",
+    "tie",
+    "suitcase",
+    "frisbee",
+    "skis",
+    "snowboard",
+    "sports ball",
+    "kite",
+    "baseball bat",
+    "baseball glove",
+    "skateboard",
+    "surfboard",
+    "tennis racket",
+    "bottle",
+    "wine glass",
+    "cup",
+    "fork",
+    "knife",
+    "spoon",
+    "bowl",
+    "banana",
+    "apple",
+    "sandwich",
+    "orange",
+    "broccoli",
+    "carrot",
+    "hot dog",
+    "pizza",
+    "donut",
+    "cake",
+    "chair",
+    "couch",
+    "potted plant",
+    "bed",
+    "dining table",
+    "toilet",
+    "tv",
+    "laptop",
+    "mouse",
+    "remote",
+    "keyboard",
+    "cell phone",
+    "microwave",
+    "oven",
+    "toaster",
+    "sink",
+    "refrigerator",
+    "book",
+    "clock",
+    "vase",
+    "scissors",
+    "teddy bear",
+    "hair drier",
+    "toothbrush",
+]
 
 
 NUM_CLASSES = len(CLASSES)
 
-COLORS_10 = [(144, 238, 144), (178, 34, 34), (221, 160, 221), (0, 255, 0), (0, 128, 0), (210, 105, 30), (220, 20, 60),
-             (192, 192, 192), (255, 228, 196), (50, 205, 50), (139, 0, 139), (100, 149, 237), (138, 43, 226),
-             (238, 130, 238),
-             (255, 0, 255), (0, 100, 0), (127, 255, 0), (255, 0, 255), (0, 0, 205), (255, 140, 0), (255, 239, 213),
-             (199, 21, 133), (124, 252, 0), (147, 112, 219), (106, 90, 205), (176, 196, 222), (65, 105, 225),
-             (173, 255, 47),
-             (255, 20, 147), (219, 112, 147), (186, 85, 211), (199, 21, 133), (148, 0, 211), (255, 99, 71),
-             (144, 238, 144),
-             (255, 255, 0), (230, 230, 250), (0, 0, 255), (128, 128, 0), (189, 183, 107), (255, 255, 224),
-             (128, 128, 128),
-             (105, 105, 105), (64, 224, 208), (205, 133, 63), (0, 128, 128), (72, 209, 204), (139, 69, 19),
-             (255, 245, 238),
-             (250, 240, 230), (152, 251, 152), (0, 255, 255), (135, 206, 235), (0, 191, 255), (176, 224, 230),
-             (0, 250, 154),
-             (245, 255, 250), (240, 230, 140), (245, 222, 179), (0, 139, 139), (143, 188, 143), (255, 0, 0),
-             (240, 128, 128),
-             (102, 205, 170), (60, 179, 113), (46, 139, 87), (165, 42, 42), (178, 34, 34), (175, 238, 238),
-             (255, 248, 220),
-             (218, 165, 32), (255, 250, 240), (253, 245, 230), (244, 164, 96), (210, 105, 30)]
+COLORS_10 = [
+    (144, 238, 144),
+    (178, 34, 34),
+    (221, 160, 221),
+    (0, 255, 0),
+    (0, 128, 0),
+    (210, 105, 30),
+    (220, 20, 60),
+    (192, 192, 192),
+    (255, 228, 196),
+    (50, 205, 50),
+    (139, 0, 139),
+    (100, 149, 237),
+    (138, 43, 226),
+    (238, 130, 238),
+    (255, 0, 255),
+    (0, 100, 0),
+    (127, 255, 0),
+    (255, 0, 255),
+    (0, 0, 205),
+    (255, 140, 0),
+    (255, 239, 213),
+    (199, 21, 133),
+    (124, 252, 0),
+    (147, 112, 219),
+    (106, 90, 205),
+    (176, 196, 222),
+    (65, 105, 225),
+    (173, 255, 47),
+    (255, 20, 147),
+    (219, 112, 147),
+    (186, 85, 211),
+    (199, 21, 133),
+    (148, 0, 211),
+    (255, 99, 71),
+    (144, 238, 144),
+    (255, 255, 0),
+    (230, 230, 250),
+    (0, 0, 255),
+    (128, 128, 0),
+    (189, 183, 107),
+    (255, 255, 224),
+    (128, 128, 128),
+    (105, 105, 105),
+    (64, 224, 208),
+    (205, 133, 63),
+    (0, 128, 128),
+    (72, 209, 204),
+    (139, 69, 19),
+    (255, 245, 238),
+    (250, 240, 230),
+    (152, 251, 152),
+    (0, 255, 255),
+    (135, 206, 235),
+    (0, 191, 255),
+    (176, 224, 230),
+    (0, 250, 154),
+    (245, 255, 250),
+    (240, 230, 140),
+    (245, 222, 179),
+    (0, 139, 139),
+    (143, 188, 143),
+    (255, 0, 0),
+    (240, 128, 128),
+    (102, 205, 170),
+    (60, 179, 113),
+    (46, 139, 87),
+    (165, 42, 42),
+    (178, 34, 34),
+    (175, 238, 238),
+    (255, 248, 220),
+    (218, 165, 32),
+    (255, 250, 240),
+    (253, 245, 230),
+    (244, 164, 96),
+    (210, 105, 30),
+]
 
-ANCHORS = [[10, 13, 16, 30, 33, 23], [30, 61, 62, 45, 59, 119], [116, 90, 156, 198, 373, 326]]
+ANCHORS = [
+    [10, 13, 16, 30, 33, 23],
+    [30, 61, 62, 45, 59, 119],
+    [116, 90, 156, 198, 373, 326],
+]
 NUM_LAYERS = len(ANCHORS)
 NUM_ANCHORS = len(ANCHORS[0]) // 2
 ANCHORS = np.reshape(np.array(ANCHORS, dtype=np.float32), (NUM_LAYERS, -1, 2))
 STRIDE = np.array([8.0, 16.0, 32.0], dtype=np.float32)
 ANCHORS /= np.reshape(STRIDE, (-1, 1, 1))
 
+
 def load_output(prediction):
     outputs = []
     for i in range(NUM_LAYERS):
         batch_size, _, ny, nx = prediction[i].shape
         prediction[i] = np.transpose(
-            np.reshape(prediction[i], (batch_size, NUM_ANCHORS, NUM_CLASSES+5, ny, nx)),
-            axes = (0, 1, 3, 4, 2)
+            np.reshape(prediction[i], (batch_size, NUM_ANCHORS, NUM_CLASSES + 5, ny, nx)),
+            axes=(0, 1, 3, 4, 2),
         )
 
-        xy, wh, conf = np.split(sigmoid(prediction[i]), [2,4], axis=4)
+        xy, wh, conf = np.split(sigmoid(prediction[i]), [2, 4], axis=4)
         xy = (xy * 2 + GRID[i]) * STRIDE[i]
         wh = (wh * 2) ** 2 * ANCHOR_GRID[i]
         y = np.concatenate((xy, wh, conf), axis=4)
         outputs.append(np.reshape(y, (1, NUM_ANCHORS * nx * ny, NUM_CLASSES + 5)))
 
-    return np.concatenate(outputs, axis = 1)
+    return np.concatenate(outputs, axis=1)
+
 
 def sigmoid(x: np.ndarray) -> np.ndarray:
     # pylint: disable=invalid-name
@@ -108,17 +245,19 @@ def non_max_suppression(
         n = x.shape[0]
         if not n:
             continue
-            
+
         if n > max_nms:
             x = x[np.argsort(x[:, 4])[::-1][:max_nms]]
 
         classes = x[:, 5:6] * (0 if agnostic else max_wh)  # classes
         boxes, scores = x[:, :4] + classes, x[:, 4]  # boxes (offset by class), scores
 
-        i = torchvision.ops.nms(torch.from_numpy(boxes), torch.from_numpy(scores), iou_thres).numpy()
+        i = torchvision.ops.nms(
+            torch.from_numpy(boxes), torch.from_numpy(scores), iou_thres
+        ).numpy()
         if i.shape[0] > max_det:
             i = i[:max_det]
-        
+
         output[xi] = x[i]
 
     return output
@@ -146,6 +285,7 @@ def init_grid():
 
     return grid, anchor_grid
 
+
 def make_grid(nx: int, ny: int, i: int):
     shape = 1, NUM_ANCHORS, ny, nx, 2
     y, x = np.arange(ny, dtype=np.float32), np.arange(nx, dtype=np.float32)
@@ -157,13 +297,14 @@ def make_grid(nx: int, ny: int, i: int):
     )
     return grid, anchor_grid
 
+
 GRID, ANCHOR_GRID = init_grid()
+
 
 def plot_one_box(x, img, color=None, label=None, line_thickness=None):
     # Plots one bounding box on image img
 
-    tl = line_thickness or round(
-        0.001 * max(img.shape[0:2])) + 1  # line thickness
+    tl = line_thickness or round(0.001 * max(img.shape[0:2])) + 1  # line thickness
     color = color or [random.randint(0, 255) for _ in range(3)]
     c1, c2 = (int(x[0]), int(x[1])), (int(x[2]), int(x[3]))
     cv2.rectangle(img, c1, c2, color, thickness=tl)
@@ -172,12 +313,16 @@ def plot_one_box(x, img, color=None, label=None, line_thickness=None):
         t_size = cv2.getTextSize(label, 0, fontScale=tl / 3, thickness=tf)[0]
         c2 = c1[0] + t_size[0], c1[1] - t_size[1] - 3
         cv2.rectangle(img, c1, c2, color, -1)  # filled
-        cv2.putText(img,
-                    label, (c1[0], c1[1] - 2),
-                    0,
-                    tl / 3, [225, 255, 255],
-                    thickness=tf,
-                    lineType=cv2.LINE_AA)
+        cv2.putText(
+            img,
+            label,
+            (c1[0], c1[1] - 2),
+            0,
+            tl / 3,
+            [225, 255, 255],
+            thickness=tf,
+            lineType=cv2.LINE_AA,
+        )
     return img
 
 
@@ -189,9 +334,8 @@ def draw_bbox(img_path, bbox, preproc_param):
     bbox[:, [1, 3]] = (1 / ratio) * (bbox[:, [1, 3]] - dwdh[1])
 
     for i, box in enumerate(bbox):
-        
         x0, y0, x1, y1 = [int(i) for i in box[:4]]
-        mbox = np.array([x0,y0,x1,y1])
+        mbox = np.array([x0, y0, x1, y1])
         mbox = mbox.round().astype(np.int32).tolist()
         score = box[4]
         class_id = int(box[5])
@@ -200,5 +344,5 @@ def draw_bbox(img_path, bbox, preproc_param):
         label = f"{CLASSES[class_id]} ({score:.2f})"
 
         img = plot_one_box([x0, y0, x1, y1], img, color, label)
-        
+
     return img
