@@ -10,7 +10,7 @@ def load_input(image_path: str, new_shape=(640, 640)):
 
     img, preproc_params = letterbox(img, new_shape, auto=False)
 
-    img = img.transpose((2, 0, 1))
+    img = img.transpose((2, 0, 1))[::-1]
     img = np.expand_dims(img, 0)
     img = np.ascontiguousarray(img, dtype=np.float32) / 255.0
     return img, preproc_params
